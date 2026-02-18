@@ -27,6 +27,15 @@ var api               = require('./api.js'),
             case "AWS::EC2::InternetGateway":
                 assetType = "igw";
                 break;
+            case "AWS::EKS::Cluster":
+                assetType = "eks-cluster";
+                break;
+            case "AWS::EKS::Nodegroup":
+                assetType = "eks-nodegroup";
+                break;
+            case "AWS::EKS::FargateProfile":
+                assetType = "eks-fargate";
+                break;
             default:
                 assetType = null;
                 break;
@@ -70,10 +79,29 @@ var api               = require('./api.js'),
             } 
         };
         api.getMany(token, params, callback);
+    },
+
+    getEksClustersInScope = function(token, accountId, environmentId, region, callback) {
+        "use strict";
+        var params = {
+            'service': 'assets',
+            'endpoint': 'environments',
+            'accountId': accountId,
+            'id': environmentId,
+            'prefix': 'assets',
+            'query': {
+                "asset_types": "r:region,e:eks-cluster",
+                "r.key": "/aws/" + region,
+                "return_types": "e",
+                "scope": "true"
+            }
+        };
+        api.getMany(token, params, callback);
     };
 
 module.exports = {
     getAssetKey: getAssetKey,
     getRegionsInScope: getRegionsInScope,
-    getVpcsInScope: getVpcsInScope
+    getVpcsInScope: getVpcsInScope,
+    getEksClustersInScope: getEksClustersInScope
 };

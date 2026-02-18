@@ -96,6 +96,9 @@ function getResourceTypeScope(resourceType) {
         case    "AWS::EC2::VPC":            return "vpc";
         case    "AWS::EC2::InternetGateway": return "internet gateway";
         case    "AWS::S3::Bucket":          return "s3";
+        case    "AWS::EKS::Cluster":        return "eks-cluster";
+        case    "AWS::EKS::Nodegroup":      return "eks-nodegroup";
+        case    "AWS::EKS::FargateProfile": return "eks-fargate";
         default:                            return resourceType;
     }
 }

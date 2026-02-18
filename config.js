@@ -209,6 +209,84 @@ var config = {
             "name": "awsInspector",
             "enabled": false,
             "mode": ["scheduledEvent", "inspectorEvent"]
+        },
+        "eksInfrastructure": {
+            "name": "eksInfrastructure",
+            "enabled": false,
+            "mode": ["configurationItem", "snapshotEvent"],
+            "configuration": {
+                "resourceTypes": [
+                    "AWS::EKS::Cluster",
+                    "AWS::EC2::SecurityGroup",
+                    "AWS::IAM::Role"
+                ],
+                "policies": {
+                    "clusterLogging": {
+                        "requiredLogTypes": ["api", "audit", "authenticator", "controllerManager", "scheduler"]
+                    },
+                    "clusterVersion": {
+                        "minimumVersion": "1.27"
+                    },
+                    "endpointAccess": {
+                        "publicAccessRestricted": true
+                    },
+                    "encryption": {
+                        "secretsEncryptionRequired": true
+                    }
+                }
+            },
+            "vulnerability": {
+                id: "custom-eks-001",
+                name: "EKS Cluster Security Configuration Policy Violation",
+                description: "EKS Cluster was found to have security configurations that do not meet organizational policy requirements.",
+                remediation: "Update the EKS cluster configuration to meet security policy requirements.",
+                resolution: "Update the EKS cluster to enable required logging, restrict public endpoint access, enable secrets encryption, and ensure the cluster is running a supported Kubernetes version.",
+                risk: "High",
+                scope: "eks-cluster",
+                ccss_score: "6.5",
+                resolution_type: "Reconfigure EKS Cluster",
+                reference: "https://docs.aws.amazon.com/eks/latest/userguide/security-best-practices.html",
+                pci_concern: "N/A",
+                ccss_vector: "N/A",
+                evidence: "{eks_configuration,0}",
+                type: "application/json"
+            }
+        },
+        "eksNodeGroup": {
+            "name": "eksNodeGroup",
+            "enabled": false,
+            "mode": ["configurationItem", "snapshotEvent"],
+            "configuration": {
+                "resourceTypes": [
+                    "AWS::EKS::Nodegroup",
+                    "AWS::EC2::SecurityGroup"
+                ],
+                "policies": {
+                    "amiType": {
+                        "allowedTypes": ["AL2_x86_64", "AL2_x86_64_GPU", "AL2_ARM_64", "BOTTLEROCKET_ARM_64", "BOTTLEROCKET_x86_64"]
+                    },
+                    "updateConfig": {
+                        "maxUnavailable": 1
+                    },
+                    "requiredTags": ["Environment", "Team", "CostCenter"]
+                }
+            },
+            "vulnerability": {
+                id: "custom-eks-002",
+                name: "EKS Node Group Configuration Policy Violation",
+                description: "EKS Node Group was found to have configurations that do not meet organizational policy requirements.",
+                remediation: "Update the EKS node group configuration to meet policy requirements.",
+                resolution: "Ensure node groups use approved AMI types, have proper update configurations, and include required tags.",
+                risk: "Medium",
+                scope: "eks-nodegroup",
+                ccss_score: "4.5",
+                resolution_type: "Reconfigure EKS Node Group",
+                reference: "https://docs.aws.amazon.com/eks/latest/userguide/managed-node-groups.html",
+                pci_concern: "N/A",
+                ccss_vector: "N/A",
+                evidence: "{nodegroup_configuration,0}",
+                type: "application/json"
+            }
         }
     }
 };
