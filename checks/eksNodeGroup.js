@@ -89,9 +89,9 @@ function checkAmiType(configuration, policy) {
 
 function checkUpdateConfig(configuration, policy) {
     "use strict";
-    var updateConfig = configuration.updateConfig || {};
+    var updateConfig = configuration.updateConfig;
     
-    if (!updateConfig) {
+    if (!updateConfig || typeof updateConfig !== 'object' || Object.keys(updateConfig).length === 0) {
         return {
             check: "updateConfig",
             reason: "Update configuration is not set",
